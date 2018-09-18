@@ -192,6 +192,10 @@ QString AutoCompleter::autoComplete(QTextCursor &cursor, const QString &textToIn
     QTextDocument *doc = cursor.document();
     const QChar lookAhead = doc->characterAt(cursor.selectionEnd());
 
+    if (textToInsert.size() == 1 && textToInsert == lookAhead) {
+        skipChars = true;
+    }
+
     int skippedChars = 0;
 
     if (isQuote(textToInsert) && m_autoInsertQuotes
