@@ -954,7 +954,8 @@ void Lexer::scanNumericLiteral(Token *tok)
             yyinp();
             while (std::isdigit(_yychar) ||
                    (_yychar >= 'a' && _yychar <= 'f') ||
-                   (_yychar >= 'A' && _yychar <= 'F')) {
+                   (_yychar >= 'A' && _yychar <= 'F') ||
+                   (_yychar == '\'')) {
                 yyinp();
             }
             if (!scanOptionalIntegerSuffix())
@@ -962,7 +963,7 @@ void Lexer::scanNumericLiteral(Token *tok)
             goto theEnd;
         } else if (_yychar == 'b' || _yychar == 'B') { // see n3472
             yyinp();
-            while (_yychar == '0' || _yychar == '1')
+            while (_yychar == '0' || _yychar == '1' || _yychar == '\'')
                 yyinp();
             if (!scanOptionalIntegerSuffix())
                 scanOptionalUserDefinedLiteral(tok);
@@ -970,7 +971,7 @@ void Lexer::scanNumericLiteral(Token *tok)
         } else if (_yychar >= '0' && _yychar <= '7') {
             do {
                 yyinp();
-            } while (_yychar >= '0' && _yychar <= '7');
+            } while ((_yychar >= '0' && _yychar <= '7') || _yychar == '\'');
             if (!scanOptionalIntegerSuffix())
                 scanOptionalUserDefinedLiteral(tok);
             goto theEnd;
@@ -989,7 +990,7 @@ void Lexer::scanNumericLiteral(Token *tok)
             if (scanExponentPart() && !scanOptionalFloatingSuffix())
                 scanOptionalUserDefinedLiteral(tok);
             break;
-        } else if (std::isdigit(_yychar)) {
+        } else if (std::isdigit(_yychar) || _yychar == '\'') {
             yyinp();
         } else {
             if (!scanOptionalIntegerSuffix())
