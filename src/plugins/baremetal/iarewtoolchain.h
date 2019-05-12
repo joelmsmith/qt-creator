@@ -89,7 +89,7 @@ protected:
     IarToolChain(const IarToolChain &tc) = default;
 
 private:
-    explicit IarToolChain(Detection d);
+    IarToolChain();
 
     ProjectExplorer::Abi m_targetAbi;
     Utils::FileName m_compilerCommand;
@@ -119,7 +119,7 @@ private:
     QList<ProjectExplorer::ToolChain *> autoDetectToolchains(const Candidates &candidates,
             const QList<ProjectExplorer::ToolChain *> &alreadyKnown) const;
     QList<ProjectExplorer::ToolChain *> autoDetectToolchain(
-            const Candidate &candidate, Core::Id language) const;
+            const Candidate &candidate, Core::Id languageId) const;
 };
 
 // IarToolChainConfigWidget

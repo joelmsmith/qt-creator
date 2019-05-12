@@ -239,8 +239,8 @@ static QString buildDisplayName(Abi::Architecture arch, Core::Id language,
 
 // KeilToolchain
 
-KeilToolchain::KeilToolchain(Detection d) :
-    ToolChain(Constants::KEIL_TOOLCHAIN_TYPEID, d)
+KeilToolchain::KeilToolchain() :
+    ToolChain(Constants::KEIL_TOOLCHAIN_TYPEID)
 { }
 
 QString KeilToolchain::typeDisplayName() const
@@ -465,12 +465,12 @@ bool KeilToolchainFactory::canCreate()
 
 ToolChain *KeilToolchainFactory::create()
 {
-    return new KeilToolchain(ToolChain::ManualDetection);
+    return new KeilToolchain;
 }
 
 ToolChain *KeilToolchainFactory::restore(const QVariantMap &data)
 {
-    const auto tc = new KeilToolchain(ToolChain::ManualDetection);
+    const auto tc = new KeilToolchain;
     if (tc->fromMap(data))
         return tc;
 
@@ -512,9 +512,17 @@ QList<ToolChain *> KeilToolchainFactory::autoDetectToolchain(
     const Macros macros = dumpPredefinedMacros(candidate.compilerPath, env.toStringList());
     if (macros.isEmpty())
         return {};
-    const Abi abi = guessAbi(macros);
 
-    const auto tc = new KeilToolchain(ToolChain::AutoDetection);
+    const Abi abi = guessAbi(macros);
+    const Abi::Architecture arch = abi.architecture();
+    if (arch == Abi::Architecture::Mcs51Architecture
+            && language == ProjectExplorer::Constants::CXX_LANGUAGE_ID) {
+        // KEIL C51 compiler does not support C++ language.
+        return {};
+    }
+
+    const auto tc = new KeilToolchain;
+    tc->setDetection(ToolChain::AutoDetection);
     tc->setLanguage(language);
     tc->setCompilerCommand(candidate.compilerPath);
     tc->setTargetAbi(abi);

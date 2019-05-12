@@ -58,8 +58,7 @@ public:
     explicit MsvcToolChain(const QString &name,
                            const Abi &abi,
                            const QString &varsBat,
-                           const QString &varsBatArg,
-                           Detection d = ManualDetection);
+                           const QString &varsBatArg);
     MsvcToolChain(const MsvcToolChain &other);
     MsvcToolChain();
     ~MsvcToolChain() override;
@@ -79,7 +78,6 @@ public:
 
     std::unique_ptr<ToolChainConfigWidget> createConfigurationWidget() override;
 
-    bool canClone() const override;
     ToolChain *clone() const override;
 
     MacroInspectionRunner createMacroInspectionRunner() const override;
@@ -128,8 +126,7 @@ protected:
                            const QString &name,
                            const Abi &abi,
                            const QString &varsBat,
-                           const QString &varsBatArg,
-                           Detection d);
+                           const QString &varsBatArg);
     explicit MsvcToolChain(Core::Id typeId);
 
     static void inferWarningsForLevel(int warningLevel, WarningFlags &flags);
@@ -177,10 +174,10 @@ protected:
     QString m_varsBatArg; // Argument
 };
 
-class ClangClToolChain : public MsvcToolChain
+class PROJECTEXPLORER_EXPORT ClangClToolChain : public MsvcToolChain
 {
 public:
-    ClangClToolChain(const QString &name, const QString &llvmDir, Detection d);
+    ClangClToolChain(const QString &name, const QString &llvmDir);
     ClangClToolChain();
 
     bool isValid() const override;
