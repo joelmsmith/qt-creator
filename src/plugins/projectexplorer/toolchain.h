@@ -84,6 +84,7 @@ public:
         AutoDetection,
         AutoDetectionFromSettings,
         AutoDetectionFromSdk,
+        UninitializedDetection,
     };
 
     using Predicate = std::function<bool(const ToolChain *)>;
@@ -146,7 +147,6 @@ public:
     virtual bool operator ==(const ToolChain &) const;
 
     virtual std::unique_ptr<ToolChainConfigWidget> createConfigurationWidget() = 0;
-    virtual bool canClone() const;
     virtual ToolChain *clone() const = 0;
 
     // Used by the toolchainmanager to save user-generated tool chains.
@@ -157,11 +157,13 @@ public:
     virtual bool isJobCountSupported() const { return true; }
 
     void setLanguage(Core::Id language);
+    void setDetection(Detection d);
+
     static Utils::LanguageVersion cxxLanguageVersion(const QByteArray &cplusplusMacroValue);
     static Utils::LanguageVersion languageVersion(const Core::Id &language, const Macros &macros);
 
 protected:
-    explicit ToolChain(Core::Id typeId, Detection d);
+    explicit ToolChain(Core::Id typeId);
     explicit ToolChain(const ToolChain &);
 
     const MacrosCache &predefinedMacrosCache() const;
@@ -173,8 +175,6 @@ protected:
     virtual bool fromMap(const QVariantMap &data);
 
 private:
-    void setDetection(Detection d);
-
     const std::unique_ptr<Internal::ToolChainPrivate> d;
 
     friend class Internal::ToolChainSettingsAccessor;
